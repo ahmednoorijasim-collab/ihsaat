@@ -1,5 +1,5 @@
 'use strict';
-/* احصائيات خانقين 2 — Eng. Ahmed Noori */
+/* الإحصائيات — Eng. Ahmed Noori */
 
 const FIELDS = [
   { k: 'new_reg',       n: 'تسجيل جديد',       s: 'جديد',        g: 'reg',   c: '#0E7A62' },
@@ -348,7 +348,7 @@ function exportExcel(a, share, title = 'موقف تحديث سجل الناخب�
     const b64 = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
     if (bridge) {
       const res = share ? bridge.shareFile(fname, b64, mime) : bridge.saveFile(fname, b64, mime);
-      if (res && res !== 'ok') toast(res); else if (!share) toast('حُفظ في التنزيلات ← احصائيات خانقين');
+      if (res && res !== 'ok') toast(res); else if (!share) toast('حُفظ في التنزيلات ← الإحصائيات');
     } else {
       const bin = atob(b64); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
       const url = URL.createObjectURL(new Blob([u8], { type: mime }));
@@ -464,7 +464,7 @@ $('btnShareCfg').onclick = () => {
   readSettings();
   if (!cfg.url) return status('احفظ الرابط أولاً', false);
   const code = 'KH2:' + btoa(unescape(encodeURIComponent(JSON.stringify({ u: cfg.url, k: cfg.key, o: cfg.office }))));
-  shareText(`رمز إعداد تطبيق احصائيات خانقين 2:\n${code}\n\nافتح التطبيق ← الإعدادات ← لصق رمز إعداد`);
+  shareText(`رمز إعداد تطبيق الإحصائيات:\n${code}\n\nافتح التطبيق ← الإعدادات ← لصق رمز إعداد`);
 };
 $('btnPasteCfg').onclick = () => { $('cfgCode').hidden = false; $('btnApplyCfg').hidden = false; $('cfgCode').focus(); };
 $('btnApplyCfg').onclick = () => {

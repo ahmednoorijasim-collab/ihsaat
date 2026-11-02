@@ -1,5 +1,5 @@
 /**
- * احصائيات خانقين 2 — الخادم المشترك (Google Sheets)
+ * الإحصائيات — الخادم المشترك (Google Sheets)
  * Eng. Ahmed Noori
  *
  * غيّر رمز المكتب أدناه إلى رمز خاص بكم، ثم انشر السكربت كتطبيق ويب.
@@ -16,7 +16,7 @@ const COL_NOTES = 3 + FIELDS.length;      // 0-based index of notes
 const COL_TIME = COL_NOTES + 1;
 
 function doGet() {
-  return json_({ ok: true, app: 'احصائيات خانقين 2' });
+  return json_({ ok: true, app: 'الإحصائيات' });
 }
 
 function doPost(e) {

@@ -1,4 +1,4 @@
 pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
 dependencyResolutionManagement { repositories { google(); mavenCentral() } }
-rootProject.name = "IhsaatKhanaqin2"
+rootProject.name = "Ihsaat"
 include(":app")
