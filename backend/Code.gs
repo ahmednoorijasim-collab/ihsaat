@@ -41,8 +41,27 @@ function handle_(req) {
   }
 }
 
+/** شغّل هذه الدالة مرة واحدة من المحرر لمنح الأذونات وإنشاء جدول البيانات */
+function setup() {
+  const ss = book_();
+  sheet_();
+  Logger.log('جدول البيانات جاهز: ' + ss.getUrl());
+}
+
+function book_() {
+  let ss = null;
+  try { ss = SpreadsheetApp.getActive(); } catch (e) { }
+  if (ss) return ss;
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('SHEET_ID');
+  if (id) { try { return SpreadsheetApp.openById(id); } catch (e) { } }
+  ss = SpreadsheetApp.create('الإحصائيات - البيانات');
+  props.setProperty('SHEET_ID', ss.getId());
+  return ss;
+}
+
 function sheet_() {
-  const ss = SpreadsheetApp.getActive();
+  const ss = book_();
   let sh = ss.getSheetByName(SHEET_NAME);
   if (!sh) sh = ss.insertSheet(SHEET_NAME);
   if (sh.getLastRow() === 0) {
