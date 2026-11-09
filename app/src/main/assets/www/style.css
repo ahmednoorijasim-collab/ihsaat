@@ -27,6 +27,12 @@ input, textarea { font: inherit; color: var(--ink); }
 .icon-btn svg { width: 22px; height: 22px; }
 .pending { background: var(--accent); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 99px; }
 
+/* iPhone: 16px inputs stop Safari zooming on focus; respect notch */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select { font-size: 16px; }
+  .top { padding-top: calc(12px + env(safe-area-inset-top)); }
+}
+
 main { padding: 12px 12px 8px; max-width: 640px; margin: 0 auto; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
 .sec { font-size: 14px; color: var(--brand); margin: 14px 0 6px; }

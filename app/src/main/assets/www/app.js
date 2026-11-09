@@ -351,6 +351,12 @@ function exportExcel(a, share, title = 'موقف تحديث سجل الناخب�
       if (res && res !== 'ok') toast(res); else if (!share) toast('حُفظ في التنزيلات ← الإحصائيات');
     } else {
       const bin = atob(b64); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      // iPhone / web: share sheet (WhatsApp, Files, Telegram...) when available
+      const file = typeof File === 'function' ? new File([u8], fname, { type: mime }) : null;
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: fname }).catch(e => { if (e && e.name !== 'AbortError') toast('تعذر الإرسال: ' + e.message); });
+        return;
+      }
       const url = URL.createObjectURL(new Blob([u8], { type: mime }));
       const l = document.createElement('a'); l.href = url; l.download = fname; document.body.appendChild(l); l.click(); l.remove();
       setTimeout(() => URL.revokeObjectURL(url), 2000);

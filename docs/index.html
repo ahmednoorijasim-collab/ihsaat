@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الإحصائيات</title>
+<meta name="theme-color" content="#0B5D4B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="الإحصائيات">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 20V11M10 20V5M15 20v-7M20 20V8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+    <div>
+      <h1>الإحصائيات</h1>
+      <div class="sub" id="hdrSub">تحديث سجل الناخبين</div>
+    </div>
+  </div>
+  <div class="hdr-actions">
+    <span class="pending" id="pendingBadge" hidden></span>
+    <button class="icon-btn" id="btnSettings" aria-label="الإعدادات"><svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <!-- إدخال -->
+  <section class="view" id="v-entry">
+    <div class="card">
+      <div class="row-between">
+        <label class="lbl" for="eDate">تاريخ الإدخال</label>
+        <span class="who" id="eWho"></span>
+      </div>
+      <div class="date-row">
+        <button class="nav-day" data-d="-1" aria-label="اليوم السابق">›</button>
+        <input type="date" id="eDate">
+        <button class="nav-day" data-d="1" aria-label="اليوم التالي">‹</button>
+      </div>
+      <div class="day-name" id="eDayName"></div>
+    </div>
+
+    <div class="edit-banner" id="editBanner" hidden>
+      <span>تعديل إدخال سابق</span>
+      <button class="link" id="btnCancelEdit">إلغاء التعديل</button>
+    </div>
+
+    <div class="card">
+      <h2 class="sec">حالات التسجيل</h2>
+      <div id="fieldsReg"></div>
+      <h2 class="sec">توزيع البطاقات</h2>
+      <div id="fieldsCards"></div>
+      <label class="lbl" for="eNotes">ملاحظات</label>
+      <textarea id="eNotes" rows="2" placeholder="اختياري"></textarea>
+    </div>
+
+    <div class="save-bar">
+      <div class="save-total"><span>مجموع الحالات</span><b id="eTotal">0</b><small id="eCards"></small></div>
+      <button class="primary" id="btnSave">حفظ</button>
+    </div>
+
+    <div class="card">
+      <div class="row-between">
+        <h2 class="sec m0">مجموع المكتب لهذا اليوم</h2>
+        <button class="link" id="btnRefreshDay">تحديث</button>
+      </div>
+      <div id="dayOffice" class="mini-grid"></div>
+    </div>
+  </section>
+
+  <!-- الموقف -->
+  <section class="view" id="v-report" hidden>
+    <div class="chips" id="periodChips">
+      <button data-p="week" class="on">هذا الأسبوع</button>
+      <button data-p="lastweek">الأسبوع الماضي</button>
+      <button data-p="month">هذا الشهر</button>
+      <button data-p="lastmonth">الشهر الماضي</button>
+      <button data-p="custom">مخصص</button>
+    </div>
+    <div class="card range">
+      <label>من <input type="date" id="rFrom"></label>
+      <label>إلى <input type="date" id="rTo"></label>
+    </div>
+    <div id="reportBody"></div>
+  </section>
+
+  <!-- شهري -->
+  <section class="view" id="v-year" hidden>
+    <div class="card row-between">
+      <button class="nav-day" id="yPrev">›</button>
+      <b class="year-title" id="yTitle"></b>
+      <button class="nav-day" id="yNext">‹</button>
+    </div>
+    <div id="yearBody"></div>
+  </section>
+
+  <!-- السجل -->
+  <section class="view" id="v-log" hidden>
+    <div class="card range">
+      <label>من <input type="date" id="lFrom"></label>
+      <label>إلى <input type="date" id="lTo"></label>
+    </div>
+    <label class="check"><input type="checkbox" id="lMine"> إدخالاتي فقط</label>
+    <div id="logBody"></div>
+  </section>
+
+  <!-- الإعدادات -->
+  <section class="view" id="v-settings" hidden>
+    <div class="card">
+      <h2 class="sec m0">بيانات الموظف</h2>
+      <label class="lbl" for="sName">اسم الموظف</label>
+      <input id="sName" placeholder="مثال: أحمد نوري">
+      <label class="lbl" for="sOffice">اسم المكتب (يظهر في الموقف والإكسل)</label>
+      <input id="sOffice" placeholder="مثال: مكتب تسجيل خانقين">
+    </div>
+    <div class="card">
+      <h2 class="sec m0">الربط المشترك</h2>
+      <label class="lbl" for="sUrl">رابط الخادم (Google Sheet)</label>
+      <input id="sUrl" dir="ltr" placeholder="https://script.google.com/macros/s/.../exec">
+      <label class="lbl" for="sKey">رمز المكتب</label>
+      <input id="sKey" dir="ltr" placeholder="نفس الرمز المكتوب في السكربت">
+      <div class="btn-row">
+        <button class="primary" id="btnSaveSettings">حفظ الإعدادات</button>
+        <button class="ghost" id="btnTest">اختبار الاتصال</button>
+      </div>
+      <div class="status" id="sStatus"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec m0">مشاركة الإعدادات مع الموظفين</h2>
+      <p class="hint">أرسل رمز الإعداد لزميلك، يلصقه هنا فيرتبط بنفس البيانات مباشرة (يكتب اسمه بعدها).</p>
+      <div class="btn-row">
+        <button class="ghost" id="btnShareCfg">إرسال رمز الإعداد</button>
+        <button class="ghost" id="btnPasteCfg">لصق رمز إعداد</button>
+      </div>
+      <textarea id="cfgCode" rows="3" dir="ltr" placeholder="الصق رمز الإعداد هنا" hidden></textarea>
+      <button class="primary" id="btnApplyCfg" hidden>تطبيق الرمز</button>
+    </div>
+    <div class="card help">
+      <h2 class="sec m0">طريقة التجهيز (مرة واحدة)</h2>
+      <ol>
+        <li>افتح Google Sheets وأنشئ جدولاً جديداً باسم «الإحصائيات».</li>
+        <li>من القائمة: الإضافات ← Apps Script، احذف الموجود والصق كود الخادم.</li>
+        <li>غيّر <code>OFFICE_KEY</code> إلى رمز خاص بمكتبكم.</li>
+        <li>نشر ← نشر جديد ← تطبيق ويب. التنفيذ: «أنا»، الوصول: «أي شخص».</li>
+        <li>انسخ رابط التطبيق والصقه هنا مع الرمز، ثم اضغط اختبار الاتصال.</li>
+      </ol>
+    </div>
+    <div class="credit">Eng. Ahmed Noori</div>
+  </section>
+</main>
+
+<nav class="tabs" id="tabs">
+  <button data-v="entry" class="on"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>إدخال</button>
+  <button data-v="report"><svg viewBox="0 0 24 24"><path d="M5 20V11M10 20V5M15 20v-7M20 20V8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>الموقف</button>
+  <button data-v="year"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 10h16M9 3v4M15 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>شهري</button>
+  <button data-v="log"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>السجل</button>
+</nav>
+
+<div class="toast" id="toast" hidden></div>
+<div class="dialog-bg" id="dlg" hidden><div class="dialog"><p id="dlgMsg"></p><div class="btn-row"><button class="primary" id="dlgOk">نعم</button><button class="ghost" id="dlgNo">لا</button></div></div></div>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+<script>
+  if (!window.AndroidBridge && 'serviceWorker' in navigator && location.protocol === 'https:' && location.hostname !== 'appassets.androidplatform.net')
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>
