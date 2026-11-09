@@ -353,7 +353,8 @@ function exportExcel(a, share, title = 'موقف تحديث سجل الناخب�
       const bin = atob(b64); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
       // iPhone / web: share sheet (WhatsApp, Files, Telegram...) when available
       const file = typeof File === 'function' ? new File([u8], fname, { type: mime }) : null;
-      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if ((share || isIOS) && file && navigator.canShare && navigator.canShare({ files: [file] })) {
         navigator.share({ files: [file], title: fname }).catch(e => { if (e && e.name !== 'AbortError') toast('تعذر الإرسال: ' + e.message); });
         return;
       }
