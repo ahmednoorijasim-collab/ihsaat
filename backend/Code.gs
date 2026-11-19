@@ -2,10 +2,15 @@
  * الإحصائيات — الخادم المشترك (Google Sheets)
  * Eng. Ahmed Noori
  *
- * غيّر رمز المكتب أدناه إلى رمز خاص بكم، ثم انشر السكربت كتطبيق ويب.
+ * رمز المكتب لا يُكتب هنا: شغّل الدالة setup() مرة واحدة فتنشئ رمزاً قوياً عشوائياً
+ * وتحفظه داخل السكربت (Script Properties) وتطبعه في السجل (Execution log).
  * نفس الرمز يُكتب في إعدادات التطبيق عند كل موظف.
  */
-const OFFICE_KEY = 'khanaqin-2026';
+const WEAK_KEYS = ['', 'khanaqin-2026'];
+
+function officeKey_() {
+  return PropertiesService.getScriptProperties().getProperty('OFFICE_KEY') || '';
+}
 
 const SHEET_NAME = 'البيانات';
 const FIELDS = ['new_reg', 'reg_change', 'change', 'bio_change', 'correction', 'deletion', 'addition', 'cards_general', 'cards_special'];
@@ -23,7 +28,9 @@ function doPost(e) {
   let out;
   try {
     const req = JSON.parse(e.postData.contents);
-    if (String(req.key || '') !== OFFICE_KEY) throw new Error('رمز المكتب غير صحيح');
+    const key = officeKey_();
+    if (WEAK_KEYS.indexOf(key) >= 0 || key.length < 16) throw new Error('رمز المكتب غير مضبوط في الخادم — شغّل setup() من محرر السكربت');
+    if (String(req.key || '') !== key) throw new Error('رمز المكتب غير صحيح');
     out = handle_(req);
   } catch (err) {
     out = { ok: false, error: String(err && err.message || err) };
@@ -45,7 +52,26 @@ function handle_(req) {
 function setup() {
   const ss = book_();
   sheet_();
+  const props = PropertiesService.getScriptProperties();
+  let key = props.getProperty('OFFICE_KEY') || '';
+  if (WEAK_KEYS.indexOf(key) >= 0 || key.length < 16) {
+    key = 'KH-' + Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+    props.setProperty('OFFICE_KEY', key);
+  }
   Logger.log('جدول البيانات جاهز: ' + ss.getUrl());
+  Logger.log('رمز المكتب (انسخه إلى إعدادات التطبيق): ' + key);
+}
+
+/** لتغيير الرمز إذا انكشف: شغّلها ثم أرسل رمز الإعداد الجديد للموظفين */
+function newOfficeKey() {
+  PropertiesService.getScriptProperties().deleteProperty('OFFICE_KEY');
+  setup();
+}
+
+// نص يبدأ بـ = أو + أو - أو @ يتحول في Google Sheets إلى معادلة؛ نمنع ذلك
+function txt_(v) {
+  const s = String(v || '').slice(0, 500);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
 }
 
 function book_() {
@@ -106,9 +132,9 @@ function findRow_(sh, id) {
 
 function save_(e) {
   if (!e || !e.id || !/^\d{4}-\d{2}-\d{2}$/.test(e.date)) throw new Error('بيانات غير مكتملة');
-  const row = [String(e.id), e.date, String(e.employee || '')]
+  const row = [txt_(e.id), e.date, txt_(e.employee)]
     .concat(FIELDS.map(f => Math.max(0, Math.floor(Number(e[f]) || 0))))
-    .concat([String(e.notes || ''), new Date()]);
+    .concat([txt_(e.notes), new Date()]);
   const sh = sheet_();
   const at = findRow_(sh, e.id);
   if (at > 0) sh.getRange(at, 1, 1, row.length).setValues([row]);
